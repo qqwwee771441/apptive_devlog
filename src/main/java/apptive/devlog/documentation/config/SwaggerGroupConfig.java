@@ -10,16 +10,16 @@ public class SwaggerGroupConfig {
     @Bean
     public GroupedOpenApi publicApiV1() {
         return GroupedOpenApi.builder()
-                .group("v1")
-                .pathsToMatch("/api/v1/**")
+                .group("auth")
+                .pathsToMatch("/auth/**")
                 .build();
     }
 
     @Bean
     public GroupedOpenApi publicApiV2() {
         return GroupedOpenApi.builder()
-                .group("v2")
-                .pathsToMatch("/api/v2/**")
+                .group("user")
+                .pathsToMatch("/user/**")
                 .build();
     }
 }
