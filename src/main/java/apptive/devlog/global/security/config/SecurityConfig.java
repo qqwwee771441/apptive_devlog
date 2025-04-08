@@ -6,7 +6,6 @@ import apptive.devlog.domain.oauth2.handler.OAuth2SuccessHandler;
 import apptive.devlog.domain.oauth2.service.CustomOAuth2UserService;
 import apptive.devlog.global.security.service.CustomUserDetailsService;
 import apptive.devlog.global.security.jwt.JwtTokenProvider;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -58,6 +57,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/auth/signup", "/auth/login", "/auth/refresh", "/oauth2/**").permitAll()
+                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**").permitAll()
                         .requestMatchers("/auth/logout", "/user/profile").hasRole("USER")
                         .anyRequest().authenticated()
                 )
