@@ -1,8 +1,9 @@
 package apptive.devlog.global.resolver;
 
+import apptive.devlog.common.response.error.exception.DtoBindingFailedException;
 import apptive.devlog.global.annotation.InjectEmail;
-import apptive.devlog.global.response.error.exception.TokenInjectionFailedException;
-import apptive.devlog.global.response.error.exception.UnauthenticatedUserException;
+import apptive.devlog.common.response.error.exception.TokenInjectionFailedException;
+import apptive.devlog.common.response.error.exception.UnauthenticatedUserException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 
 @Slf4j
@@ -37,32 +39,34 @@ public class InjectEmailArgumentResolver implements HandlerMethodArgumentResolve
                                   WebDataBinderFactory binderFactory) throws Exception {
 
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
+        Object dto = createDtoInstance(request, parameter.getParameterType());
+        String email = extractCurrentUserEmail();
 
-        String email = getCurrentUserEmail();
-
-        Class<?> parameterType = parameter.getParameterType();
-        Object dto;
-
-        if ("POST".equalsIgnoreCase(request.getMethod()) || "PUT".equalsIgnoreCase(request.getMethod())) {
-            dto = objectMapper.readValue(request.getInputStream(), parameterType);
-        } else {
-            dto = parameterType.getDeclaredConstructor().newInstance();
-        }
-
-        injectIfFieldExists(dto, "email", email);
-
+        injectFieldIfPresent(dto, "email", email);
         return dto;
     }
 
-    private String getCurrentUserEmail() {
+    private Object createDtoInstance(HttpServletRequest request, Class<?> parameterType) throws Exception {
+        String method = request.getMethod().toUpperCase();
+        try {
+            if ("POST".equals(method) || "PUT".equals(method)) {
+                return objectMapper.readValue(request.getInputStream(), parameterType);
+            }
+            return parameterType.getDeclaredConstructor().newInstance();
+        } catch (IOException e) {
+            throw new DtoBindingFailedException("[InjectEmailArgumentResolver] DTO 변환 실패", e);
+        }
+    }
+
+    private String extractCurrentUserEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new UnauthenticatedUserException();
+            throw new UnauthenticatedUserException("현재 인증된 사용자가 없습니다.");
         }
         return authentication.getName();
     }
 
-    private void injectIfFieldExists(Object target, String fieldName, String value) {
+    private void injectFieldIfPresent(Object target, String fieldName, String value) {
         try {
             Field field = target.getClass().getDeclaredField(fieldName);
             if (field.getType().equals(String.class)) {
@@ -70,8 +74,9 @@ public class InjectEmailArgumentResolver implements HandlerMethodArgumentResolve
                 field.set(target, value);
             }
         } catch (NoSuchFieldException ignored) {
+            log.debug("필드 '{}' 가 존재하지 않아 주입하지 않았습니다.", fieldName);
         } catch (IllegalAccessException e) {
-            throw new TokenInjectionFailedException(fieldName, e);
+            throw new TokenInjectionFailedException("필드 주입 실패: " + fieldName, e);
         }
     }
 }

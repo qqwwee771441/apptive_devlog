@@ -1,6 +1,6 @@
-package apptive.devlog.global.response.error.exception;
+package apptive.devlog.common.response.error.exception;
 
-import apptive.devlog.global.response.error.model.ErrorCode;
+import apptive.devlog.common.response.error.model.ErrorCode;
 
 public class OAuth2UserInfoException extends CustomException {
     public OAuth2UserInfoException(String message) {

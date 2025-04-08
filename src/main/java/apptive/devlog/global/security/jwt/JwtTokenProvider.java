@@ -1,14 +1,15 @@
 package apptive.devlog.global.security.jwt;
 
 import apptive.devlog.infrastructure.redis.repository.RedisRepository;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.Instant;
+import java.util.Date;
 
 @Slf4j
 @Component
@@ -17,6 +18,7 @@ public class JwtTokenProvider {
     private final long accessTokenExpiration;
     private final long refreshTokenExpiration;
     private final RedisRepository redisRepository;
+    private final JwtParser jwtParser;
 
     public JwtTokenProvider(
             @Value("${jwt.secret}") String secretKey,
@@ -27,13 +29,15 @@ public class JwtTokenProvider {
         this.accessTokenExpiration = accessTokenExpiration;
         this.refreshTokenExpiration = refreshTokenExpiration;
         this.redisRepository = redisRepository;
+        this.jwtParser = Jwts.parserBuilder().setSigningKey(key).build();
     }
 
     public String generateToken(String email, long expiration) {
+        Instant now = Instant.now();
         return Jwts.builder()
                 .setSubject(email)
-                .setIssuedAt(java.util.Date.from(java.time.Instant.now()))
-                .setExpiration(java.util.Date.from(java.time.Instant.now().plusMillis(expiration)))
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(now.plusSeconds(expiration)))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -52,24 +56,29 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            jwtParser.parseClaimsJws(token);
             return true;
-        } catch (Exception e) {
-            return false;
+        } catch (ExpiredJwtException e) {
+            log.warn("Token expired: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            log.warn("Unsupported token: {}", e.getMessage());
+        } catch (MalformedJwtException e) {
+            log.warn("Malformed token: {}", e.getMessage());
+        } catch (SecurityException | IllegalArgumentException e) {
+            log.warn("Invalid token: {}", e.getMessage());
         }
+        return false;
     }
 
     public boolean validateAccessToken(String token) {
-        if (!validateToken(token)) return false;
-        return redisRepository.hasAccessToken(token);
+        return validateToken(token) && redisRepository.hasAccessToken(token);
     }
 
     public boolean validateRefreshToken(String token) {
-        if (!validateToken(token)) return false;
-        return redisRepository.hasRefreshToken(token);
+        return validateToken(token) && redisRepository.hasRefreshToken(token);
     }
 
     public String getEmailFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+        return jwtParser.parseClaimsJws(token).getBody().getSubject();
     }
 }

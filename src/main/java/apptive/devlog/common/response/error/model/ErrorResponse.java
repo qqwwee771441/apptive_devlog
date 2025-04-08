@@ -1,4 +1,4 @@
-package apptive.devlog.global.response.error.model;
+package apptive.devlog.common.response.error.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

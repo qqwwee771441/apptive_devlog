@@ -9,10 +9,11 @@ import java.util.concurrent.TimeUnit;
 
 @Repository
 public class RedisRepository {
+    private static final String ACCESS_TOKEN_PREFIX = "AT:";
+    private static final String REFRESH_TOKEN_PREFIX = "RT:";
     private final long accessTokenExpiration;
     private final long refreshTokenExpiration;
     private final RedisTemplate<String, String> redisTemplate;
-    private static final Duration TTL = Duration.ofMinutes(10);
 
     public RedisRepository(
             @Value("${jwt.access-token-expiration}") long accessTokenExpiration,
@@ -24,26 +25,26 @@ public class RedisRepository {
     }
 
     public void saveAccessToken(String accessToken, String email) {
-        redisTemplate.opsForValue().set("AT:" + accessToken, email, accessTokenExpiration, TimeUnit.MILLISECONDS);
-    }
-
-    public boolean hasAccessToken(String accessToken) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey("AT:" + accessToken));
-    }
-
-    public void deleteAccessToken(String accessToken) {
-        redisTemplate.delete("AT:" + accessToken);
+        redisTemplate.opsForValue().set(ACCESS_TOKEN_PREFIX + accessToken, email, accessTokenExpiration, TimeUnit.MILLISECONDS);
     }
 
     public void saveRefreshToken(String refreshToken, String email) {
-        redisTemplate.opsForValue().set("RT:" + refreshToken, email, refreshTokenExpiration, TimeUnit.MILLISECONDS);
+        redisTemplate.opsForValue().set(REFRESH_TOKEN_PREFIX + refreshToken, email, refreshTokenExpiration, TimeUnit.MILLISECONDS);
+    }
+
+    public boolean hasAccessToken(String accessToken) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey(ACCESS_TOKEN_PREFIX + accessToken));
     }
 
     public boolean hasRefreshToken(String refreshToken) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey("RT:" + refreshToken));
+        return Boolean.TRUE.equals(redisTemplate.hasKey(REFRESH_TOKEN_PREFIX + refreshToken));
+    }
+
+    public void deleteAccessToken(String accessToken) {
+        redisTemplate.delete(ACCESS_TOKEN_PREFIX + accessToken);
     }
 
     public void deleteRefreshToken(String refreshToken) {
-        redisTemplate.delete("RT:" + refreshToken);
+        redisTemplate.delete(REFRESH_TOKEN_PREFIX + refreshToken);
     }
 }

@@ -1,10 +1,12 @@
 package apptive.devlog.domain.oauth2.model;
 
+import apptive.devlog.common.response.error.exception.InvalidOAuth2ResponseException;
 import apptive.devlog.domain.user.entity.User;
 import apptive.devlog.domain.user.enums.Provider;
 import apptive.devlog.domain.user.enums.Role;
 import lombok.Getter;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,26 +19,24 @@ public class OAuth2Attributes {
     private final String email;
     private final String name;
 
-    public OAuth2Attributes(String nameAttributeKey, Provider provider,
-                            Map<String, Object> attributes, String email, String name) {
+    private OAuth2Attributes(String nameAttributeKey, Provider provider, Map<String, Object> attributes, String email, String name) {
         this.nameAttributeKey = nameAttributeKey;
         this.provider = provider;
-        // this.attributes = attributes;
         this.email = email;
         this.name = name;
-        this.attributes = new HashMap<>(attributes); // 임시 방편
-        this.attributes.put("email", email); // 임시 방편
+
+        Map<String, Object> copied = new HashMap<>(attributes);
+        copied.put("email", email);
+        this.attributes = Collections.unmodifiableMap(copied);
     }
 
-    public static OAuth2Attributes of(String registrationId, String userNameAttributeName,
-                                      Map<String, Object> attributes) {
-        if ("kakao".equals(registrationId)) {
-            return ofKakao(attributes);
-        } else if ("naver".equals(registrationId)) {
-            return ofNaver(attributes);
-        } else {
-            return ofGoogle(userNameAttributeName, attributes);
-        }
+    public static OAuth2Attributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes) {
+        return switch (registrationId.toLowerCase()) {
+            case "kakao" -> ofKakao(attributes);
+            case "naver" -> ofNaver(attributes);
+            case "google" -> ofGoogle(userNameAttributeName, attributes);
+            default -> throw new UnsupportedOperationException(registrationId);
+        };
     }
 
     private static OAuth2Attributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
@@ -50,7 +50,7 @@ public class OAuth2Attributes {
     }
 
     private static OAuth2Attributes ofNaver(Map<String, Object> attributes) {
-        Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+        Map<String, Object> response = getMap(attributes, "response");
 
         return new OAuth2Attributes(
                 "id",
@@ -62,9 +62,8 @@ public class OAuth2Attributes {
     }
 
     private static OAuth2Attributes ofKakao(Map<String, Object> attributes) {
-        Long id = ((Number) attributes.get("id")).longValue();
-        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
-        Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+        Map<String, Object> kakaoAccount = getMap(attributes, "kakao_account");
+        Map<String, Object> profile = getMap(kakaoAccount, "profile");
 
         return new OAuth2Attributes(
                 "id",
@@ -73,6 +72,14 @@ public class OAuth2Attributes {
                 (String) kakaoAccount.get("email"),
                 (String) profile.get("nickname")
         );
+    }
+
+    private static Map<String, Object> getMap(Map<String, Object> source, String key) {
+        Object value = source.get(key);
+        if (value instanceof Map<?, ?> map) {
+            return (Map<String, Object>) map;
+        }
+        throw new InvalidOAuth2ResponseException(key);
     }
 
     public User toEntity() {

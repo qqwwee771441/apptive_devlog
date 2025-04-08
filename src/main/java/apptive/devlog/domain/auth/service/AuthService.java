@@ -1,11 +1,8 @@
 package apptive.devlog.domain.auth.service;
 
+import apptive.devlog.common.response.error.exception.*;
 import apptive.devlog.domain.auth.dto.*;
 import apptive.devlog.domain.user.enums.Provider;
-import apptive.devlog.global.response.error.exception.DuplicateEmailException;
-import apptive.devlog.global.response.error.exception.InvalidEmailOrPasswordException;
-import apptive.devlog.global.response.error.exception.InvalidProviderException;
-import apptive.devlog.global.response.error.exception.InvalidRefreshTokenException;
 import apptive.devlog.global.security.jwt.JwtTokenProvider;
 import apptive.devlog.infrastructure.redis.repository.RedisRepository;
 import apptive.devlog.domain.user.entity.User;
@@ -35,7 +32,7 @@ public class AuthService {
 
     @Transactional
     public UserLoginResponseDto login(UserLoginRequestDto requestDto) {
-        User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+        User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(UserNotFoundException::new);
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new InvalidEmailOrPasswordException();
         }
@@ -49,30 +46,27 @@ public class AuthService {
 
     @Transactional
     public UserRefreshResponseDto refresh(UserRefreshRequestDto requestDto) {
-        String accessToken = requestDto.getAccessToken();
-        String refreshToken = requestDto.getRefreshToken();
+        final String accessToken = requestDto.getAccessToken();
+        final String refreshToken = requestDto.getRefreshToken();
 
         if (!jwtTokenProvider.validateRefreshToken(refreshToken)) {
             throw new InvalidRefreshTokenException();
         }
 
-        String email = jwtTokenProvider.getEmailFromToken(refreshToken);
+        final String email = jwtTokenProvider.getEmailFromToken(refreshToken);
 
         redisRepository.deleteAccessToken(accessToken);
         redisRepository.deleteRefreshToken(refreshToken);
 
-        String newAccessToken = jwtTokenProvider.generateAccessToken(email);
-        String newRefreshToken = jwtTokenProvider.generateRefreshToken(email);
+        final String newAccessToken = jwtTokenProvider.generateAccessToken(email);
+        final String newRefreshToken = jwtTokenProvider.generateRefreshToken(email);
 
         return new UserRefreshResponseDto(newAccessToken, newRefreshToken);
     }
 
     @Transactional
     public void logout(UserLogoutRequestDto requestDto) {
-        String accessToken = requestDto.getAccessToken();
-        String refreshToken = requestDto.getRefreshToken();
-
-        redisRepository.deleteAccessToken(accessToken);
-        redisRepository.deleteRefreshToken(refreshToken);
+        redisRepository.deleteAccessToken(requestDto.getAccessToken());
+        redisRepository.deleteRefreshToken(requestDto.getRefreshToken());
     }
 }
