@@ -1,4 +1,4 @@
-package apptive.devlog.documentation.comment;
+package apptive.devlog.documentation.domain.comment;
 
 import io.swagger.v3.oas.annotations.Operation;
 

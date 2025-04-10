@@ -1,4 +1,4 @@
-package apptive.devlog.documentation.wrapper;
+package apptive.devlog.documentation.domain.user.wrapper;
 
 import apptive.devlog.common.response.success.CommonResponse;
 import apptive.devlog.domain.auth.dto.UserLoginResponseDto;

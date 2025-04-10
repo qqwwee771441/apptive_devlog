@@ -2,7 +2,7 @@ package apptive.devlog.domain.user.controller;
 
 import apptive.devlog.common.response.success.CommonResponse;
 import apptive.devlog.documentation.tags.UserDocumentation;
-import apptive.devlog.documentation.user.UserProfileDoc;
+import apptive.devlog.documentation.domain.user.UserProfileDoc;
 import apptive.devlog.domain.user.dto.UserProfileRequestDto;
 import apptive.devlog.domain.user.dto.UserProfileResponseDto;
 import apptive.devlog.domain.user.service.UserService;

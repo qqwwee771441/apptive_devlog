@@ -1,6 +1,6 @@
-package apptive.devlog.documentation.auth;
+package apptive.devlog.documentation.domain.auth;
 
-import apptive.devlog.documentation.wrapper.UserRefreshResponseWrapper;
+import apptive.devlog.documentation.domain.user.wrapper.UserRefreshResponseWrapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

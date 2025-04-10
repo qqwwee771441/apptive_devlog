@@ -1,10 +1,10 @@
 package apptive.devlog.domain.auth.controller;
 
 import apptive.devlog.common.response.success.CommonResponse;
-import apptive.devlog.documentation.auth.AuthLoginDoc;
-import apptive.devlog.documentation.auth.AuthLogoutDoc;
-import apptive.devlog.documentation.auth.AuthRefreshDoc;
-import apptive.devlog.documentation.auth.AuthSignupDoc;
+import apptive.devlog.documentation.domain.auth.AuthLoginDoc;
+import apptive.devlog.documentation.domain.auth.AuthLogoutDoc;
+import apptive.devlog.documentation.domain.auth.AuthRefreshDoc;
+import apptive.devlog.documentation.domain.auth.AuthSignupDoc;
 import apptive.devlog.documentation.tags.AuthDocumentation;
 import apptive.devlog.domain.auth.dto.*;
 import apptive.devlog.domain.auth.service.AuthService;

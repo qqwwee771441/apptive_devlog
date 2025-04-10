@@ -1,10 +1,10 @@
 package apptive.devlog.domain.comment.controller;
 
 import apptive.devlog.common.response.success.CommonResponse;
-import apptive.devlog.documentation.comment.CommentCreateDoc;
-import apptive.devlog.documentation.comment.CommentDeleteDoc;
-import apptive.devlog.documentation.comment.CommentReadDoc;
-import apptive.devlog.documentation.comment.CommentUpdateDoc;
+import apptive.devlog.documentation.domain.comment.CommentCreateDoc;
+import apptive.devlog.documentation.domain.comment.CommentDeleteDoc;
+import apptive.devlog.documentation.domain.comment.CommentReadDoc;
+import apptive.devlog.documentation.domain.comment.CommentUpdateDoc;
 import apptive.devlog.documentation.tags.CommentDocumentation;
 import apptive.devlog.domain.comment.dto.CommentDto;
 import apptive.devlog.domain.comment.service.CommentService;

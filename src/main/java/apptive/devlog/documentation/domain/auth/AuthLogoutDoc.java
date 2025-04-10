@@ -1,4 +1,4 @@
-package apptive.devlog.documentation.auth;
+package apptive.devlog.documentation.domain.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

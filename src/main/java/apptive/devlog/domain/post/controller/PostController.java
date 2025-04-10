@@ -1,10 +1,10 @@
 package apptive.devlog.domain.post.controller;
 
 import apptive.devlog.common.response.success.CommonResponse;
-import apptive.devlog.documentation.post.PostCreateDoc;
-import apptive.devlog.documentation.post.PostDeleteDoc;
-import apptive.devlog.documentation.post.PostReadDoc;
-import apptive.devlog.documentation.post.PostUpdateDoc;
+import apptive.devlog.documentation.domain.post.PostCreateDoc;
+import apptive.devlog.documentation.domain.post.PostDeleteDoc;
+import apptive.devlog.documentation.domain.post.PostReadDoc;
+import apptive.devlog.documentation.domain.post.PostUpdateDoc;
 import apptive.devlog.documentation.tags.PostDocumentation;
 import apptive.devlog.domain.post.dto.PostDto;
 import apptive.devlog.domain.post.service.PostService;

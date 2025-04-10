@@ -1,4 +1,4 @@
-package apptive.devlog.documentation.user;
+package apptive.devlog.documentation.domain.user;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

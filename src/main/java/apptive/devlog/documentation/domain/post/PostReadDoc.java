@@ -1,4 +1,4 @@
-package apptive.devlog.documentation.post;
+package apptive.devlog.documentation.domain.post;
 
 import io.swagger.v3.oas.annotations.Operation;
 
