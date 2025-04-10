@@ -8,7 +8,15 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerGroupConfig {
 
     @Bean
-    public GroupedOpenApi publicApiV1() {
+    public GroupedOpenApi defaultAllApi() {
+        return GroupedOpenApi.builder()
+                .group("all")
+                .pathsToMatch("/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi publicApiAuth() {
         return GroupedOpenApi.builder()
                 .group("auth")
                 .pathsToMatch("/auth/**")
@@ -16,10 +24,18 @@ public class SwaggerGroupConfig {
     }
 
     @Bean
-    public GroupedOpenApi publicApiV2() {
+    public GroupedOpenApi publicApiUser() {
         return GroupedOpenApi.builder()
                 .group("user")
                 .pathsToMatch("/user/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi publicApiPost() {
+        return GroupedOpenApi.builder()
+                .group("post")
+                .pathsToMatch("/post/**")
                 .build();
     }
 }

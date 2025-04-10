@@ -4,6 +4,7 @@ import apptive.devlog.common.base.BaseEntity;
 import apptive.devlog.domain.user.enums.Gender;
 import apptive.devlog.domain.user.enums.Provider;
 import apptive.devlog.domain.user.enums.Role;
+import de.huxhorn.sulky.ulid.ULID;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,10 +20,6 @@ import java.util.Set;
 @Builder
 @Table(name = "users")
 public class User extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(nullable = false, unique = true)
     private String email;
 

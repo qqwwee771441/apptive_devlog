@@ -7,6 +7,7 @@ import apptive.devlog.domain.user.repository.UserRepository;
 import apptive.devlog.common.response.error.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
