@@ -8,7 +8,6 @@ import apptive.devlog.domain.post.repository.PostRepository;
 import apptive.devlog.domain.user.entity.User;
 import apptive.devlog.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +37,7 @@ public class CommentService {
             }
         }
 
-        Comment comment = Comment.builder().text(dto.text()).author(author).parent(parent).build();
+        Comment comment = Comment.builder().text(dto.text()).author(author).parent(parent).post(post).build();
         commentRepository.save(comment);
         return toResponse(comment);
     }

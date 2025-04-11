@@ -10,12 +10,14 @@ import apptive.devlog.domain.auth.dto.*;
 import apptive.devlog.domain.auth.service.AuthService;
 import apptive.devlog.global.annotation.InjectToken;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -24,29 +26,33 @@ public class AuthController implements AuthDocumentation {
 
     @AuthSignupDoc
     @PostMapping("/signup")
-    public ResponseEntity<CommonResponse<UserSignupResponseDto>> signup(@Valid @RequestBody UserSignupRequestDto requestDto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommonResponse<UserSignupResponseDto> signup(@Valid @RequestBody UserSignupRequestDto requestDto) {
         UserSignupResponseDto responseDto = authService.signup(requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.created(responseDto));
+        return CommonResponse.created(responseDto);
     }
 
     @AuthLoginDoc
     @PostMapping("/login")
-    public ResponseEntity<CommonResponse<UserLoginResponseDto>> login(@Valid @RequestBody UserLoginRequestDto requestDto) {
+    @ResponseStatus(HttpStatus.OK)
+    public CommonResponse<UserLoginResponseDto> login(@Valid @RequestBody UserLoginRequestDto requestDto) {
         UserLoginResponseDto responseDto = authService.login(requestDto);
-        return ResponseEntity.ok(CommonResponse.ok(responseDto));
+        return CommonResponse.ok(responseDto);
     }
 
     @AuthRefreshDoc
     @PostMapping("/refresh")
-    public ResponseEntity<CommonResponse<UserRefreshResponseDto>> refresh(@Valid @InjectToken UserRefreshRequestDto requestDto) {
+    @ResponseStatus(HttpStatus.OK)
+    public CommonResponse<UserRefreshResponseDto> refresh(@Valid @InjectToken UserRefreshRequestDto requestDto) {
         UserRefreshResponseDto responseDto = authService.refresh(requestDto);
-        return ResponseEntity.ok(CommonResponse.ok(responseDto));
+        return CommonResponse.ok(responseDto);
     }
 
     @AuthLogoutDoc
     @PostMapping("/logout")
-    public ResponseEntity<CommonResponse<Void>> logout(@Valid @InjectToken UserLogoutRequestDto requestDto) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public CommonResponse<Void> logout(@Valid @InjectToken UserLogoutRequestDto requestDto) {
         authService.logout(requestDto);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(CommonResponse.noContent());
+        return CommonResponse.noContent();
     }
 }
