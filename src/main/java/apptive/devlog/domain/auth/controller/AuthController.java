@@ -50,7 +50,7 @@ public class AuthController implements AuthDocumentation {
 
     @AuthLogoutDoc
     @PostMapping("/logout")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public CommonResponse<Void> logout(@Valid @InjectToken UserLogoutRequestDto requestDto) {
         authService.logout(requestDto);
         return CommonResponse.noContent();

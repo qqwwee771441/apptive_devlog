@@ -1,5 +1,6 @@
 package apptive.devlog.global.security.config;
 
+import apptive.devlog.domain.oauth2.handler.OAuth2SuccessHandlerForUnity;
 import apptive.devlog.global.security.filter.JwtAuthenticationFilter;
 import apptive.devlog.domain.oauth2.handler.OAuth2FailureHandler;
 import apptive.devlog.domain.oauth2.handler.OAuth2SuccessHandler;
@@ -31,6 +32,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
+    private final OAuth2SuccessHandlerForUnity oAuth2SuccessHandlerForUnity;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -66,7 +68,7 @@ public class SecurityConfig {
                         .authorizationEndpoint(endpoint -> endpoint.baseUri("/oauth2/authorization"))
                         .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))
                         .userInfoEndpoint(endpoint -> endpoint.userService(customOAuth2UserService))
-                        .successHandler(oAuth2SuccessHandler)
+                        .successHandler(oAuth2SuccessHandlerForUnity)
                         .failureHandler(oAuth2FailureHandler)
                 )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)

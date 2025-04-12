@@ -37,4 +37,6 @@ out/
 .vscode/
 
 src/main/resources/application-secret.properties
-/src/test/resources/application-secret.properties
+src/main/resources/keystore.p12
+docker-compose.yml
+src/test/resources/application-secret.properties
