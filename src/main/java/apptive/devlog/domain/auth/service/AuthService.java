@@ -21,12 +21,17 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisRepository redisRepository;
+    private final EmailVerificationService emailVerificationService;
 
     @Transactional
     public UserSignupResponseDto signup(UserSignupRequestDto requestDto) {
         if (userRepository.existsByEmail(requestDto.getEmail())) {
             throw new DuplicateEmailException();
         }
+        if (!emailVerificationService.isVerified(requestDto.getEmail(), requestDto.getToken())) {
+            throw new IllegalArgumentException("이메일 인증이 필요합니다.");
+        }
+
         User user = requestDto.toEntity(passwordEncoder);
         userRepository.save(user);
         return new UserSignupResponseDto(user);

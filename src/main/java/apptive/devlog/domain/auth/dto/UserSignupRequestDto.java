@@ -22,15 +22,19 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Schema(description = "회원가입 요청 DTO")
 public class UserSignupRequestDto {
-    @Schema(description = "이메일", example = "test@example.com", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "이메일", example = "user@example.com", requiredMode = Schema.RequiredMode.REQUIRED)
     @Email
     @NotBlank
     private String email;
 
-    @Schema(description = "비밀번호 (8자 이상 20자 이하)", example = "P@ssword123", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "비밀번호 (8자 이상 20자 이하)", example = "securePassword123!", requiredMode = Schema.RequiredMode.REQUIRED)
     @Size(min = 8, max = 20)
     @NotBlank
     private String password;
+
+    @Schema(description = "이메일 인증 토큰", example = "", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotBlank
+    private String token;
 
     @Schema(description = "이름", example = "홍길동", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank

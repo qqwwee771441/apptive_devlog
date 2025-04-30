@@ -1,6 +1,5 @@
 package apptive.devlog.domain.post.dto;
 
-import apptive.devlog.domain.user.entity.User;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 

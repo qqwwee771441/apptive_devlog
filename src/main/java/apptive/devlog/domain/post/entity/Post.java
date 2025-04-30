@@ -29,6 +29,7 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
+    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
